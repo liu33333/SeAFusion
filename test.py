@@ -8,12 +8,14 @@ from datasets import Fusion_dataset
 from FusionNet import FusionNet
 from tqdm import tqdm
 
+
 # To run, set the fused_dir, and the val path in the TaskFusionDataset.py
-def main(ir_dir='./test_imgs/ir', vi_dir='./test_imgs/vi', save_dir='./SeAFusion', fusion_model_path='./model/Fusion/fusionmodel_final.pth'):
+def main(ir_dir='./test_imgs/ir', vi_dir='./test_imgs/vi', save_dir='./SeAFusion',
+         fusion_model_path='./model/Fusion/fusionmodel_final.pth'):
     fusionmodel = FusionNet(output=1)
     device = torch.device("cuda:{}".format(args.gpu) if torch.cuda.is_available() else "cpu")
-    fusionmodel.load_state_dict(torch.load(fusion_model_path))
-    fusionmodel = fusionmodel.to(device)
+    fusionmodel.load_state_dict(torch.load(fusion_model_path))  # 将预训练模型加载到当前网络中
+    fusionmodel = fusionmodel.to(device)  # 将网络放到GPU上
     print('fusionmodel load done!')
     test_dataset = Fusion_dataset('val', ir_path=ir_dir, vi_path=vi_dir)
     test_loader = DataLoader(
@@ -25,7 +27,7 @@ def main(ir_dir='./test_imgs/ir', vi_dir='./test_imgs/vi', save_dir='./SeAFusion
         drop_last=False,
     )
     test_loader.n_iter = len(test_loader)
-    test_bar = tqdm(test_loader)
+    test_bar = tqdm(test_loader)  # 显示进度条
     with torch.no_grad():
         for it, (img_vis, img_ir, name) in enumerate(test_bar):
             img_vis = img_vis.to(device)
@@ -41,6 +43,7 @@ def main(ir_dir='./test_imgs/ir', vi_dir='./test_imgs/vi', save_dir='./SeAFusion
                 save_path = os.path.join(save_dir, img_name)
                 save_img_single(fused_img[k, ::], save_path)
                 test_bar.set_description('Fusion {0} Sucessfully!'.format(name[k]))
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Run SeAFusiuon with pytorch')

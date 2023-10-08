@@ -19,5 +19,6 @@ Run "**CUDA_VISIBLE_DEVICES=0 python test.py**" to test the model.
  - [ ] torchvision 0.8.2
  - [ ] numpy 1.19.2
  - [ ] pillow  8.0.1
+ - [ ] tqdm
 
 ## If this work is helpful to you, please cite it as：

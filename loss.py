@@ -9,7 +9,7 @@ import torch.nn.functional as F
 import numpy as np
 
 
-class OhemCELoss(nn.Module):
+class OhemCELoss(nn.Module): # 用于语义分割的损失函数
     def __init__(self, thresh, n_min, ignore_lb=255, *args, **kwargs):
         super(OhemCELoss, self).__init__()
         self.thresh = -torch.log(torch.tensor(thresh, dtype=torch.float)).cuda()
@@ -28,19 +28,19 @@ class OhemCELoss(nn.Module):
         return torch.mean(loss)
 
 
-class SoftmaxFocalLoss(nn.Module):
-    def __init__(self, gamma, ignore_lb=255, *args, **kwargs):
-        super(FocalLoss, self).__init__()
-        self.gamma = gamma
-        self.nll = nn.NLLLoss(ignore_index=ignore_lb)
-
-    def forward(self, logits, labels):
-        scores = F.softmax(logits, dim=1)
-        factor = torch.pow(1.-scores, self.gamma)
-        log_score = F.log_softmax(logits, dim=1)
-        log_score = factor * log_score
-        loss = self.nll(log_score, labels)
-        return loss
+# class SoftmaxFocalLoss(nn.Module):
+#     def __init__(self, gamma, ignore_lb=255, *args, **kwargs):
+#         super(FocalLoss, self).__init__()
+#         self.gamma = gamma
+#         self.nll = nn.NLLLoss(ignore_index=ignore_lb)
+#
+#     def forward(self, logits, labels):
+#         scores = F.softmax(logits, dim=1)
+#         factor = torch.pow(1.-scores, self.gamma)
+#         log_score = F.log_softmax(logits, dim=1)
+#         log_score = factor * log_score
+#         loss = self.nll(log_score, labels)
+#         return loss
 
 class NormalLoss(nn.Module):
     def __init__(self,ignore_lb=255, *args, **kwargs):
